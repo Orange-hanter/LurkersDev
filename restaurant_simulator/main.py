@@ -1,6 +1,5 @@
 """Main entry point: pygame init, game loop, state machine."""
 import pygame
-import random
 from .config import WINDOW_WIDTH, WINDOW_HEIGHT, FPS, DEFAULT_TICK_INTERVAL, BANKRUPTCY_REP
 from .models import GameState
 from .ui import Renderer, InputHandler, MainMenu, DaySetupScreen, GameScreen, DaySummaryScreen, ShopScreen, HireScreen
@@ -9,7 +8,7 @@ from .engine.tick import process_tick
 
 
 class _ScreenSwitch(Exception):
-    """Internal exception for switching screens."""
+    """Internal exception for switching screens from within the tick loop."""
     def __init__(self, screen):
         self.screen = screen
 
@@ -25,8 +24,52 @@ def _record_snapshot(state: GameState) -> None:
         "kitchen": state.kitchen,
         "hall": state.hall,
         "staff_list": state.staff_list,
-        "day_history": [],
     })
+
+
+def _transition(screen, renderer, state, is_first_day):
+    """
+    Handle screen transitions based on current screen result.
+
+    Returns (next_screen, new_is_first_day) tuple.
+    The is_first_day flag must be returned because Python booleans are immutable.
+    """
+    if isinstance(screen, MainMenu):
+        if screen.result == "start":
+            return DaySetupScreen(renderer, InputHandler(), GameState(), True), True
+
+    elif isinstance(screen, DaySetupScreen):
+        if not is_first_day:
+            return DaySetupScreen(renderer, InputHandler(), state, is_first_day), is_first_day
+        return ShopScreen(renderer, InputHandler(), state), is_first_day
+
+    elif isinstance(screen, ShopScreen):
+        if screen.result == "cancelled" and is_first_day:
+            return MainMenu(renderer, InputHandler()), is_first_day
+        if not state.staff_list:
+            return HireScreen(renderer, InputHandler(), state), is_first_day
+        _record_snapshot(state)
+        return GameScreen(renderer, InputHandler(), state), is_first_day
+
+    elif isinstance(screen, HireScreen):
+        if screen.result == "cancelled" and not state.staff_list:
+            return MainMenu(renderer, InputHandler()), is_first_day
+        _record_snapshot(state)
+        return GameScreen(renderer, InputHandler(), state), is_first_day
+
+    elif isinstance(screen, GameScreen):
+        if state.day_history:
+            state.day_history[-1]["end_budget"] = state.budget
+            state.day_history[-1]["end_reputation"] = state.reputation
+        return DaySummaryScreen(renderer, InputHandler(), state), is_first_day
+
+    elif isinstance(screen, DaySummaryScreen):
+        if screen.result == "next_day" and state.reputation >= BANKRUPTCY_REP:
+            state.day += 1
+            return DaySetupScreen(renderer, InputHandler(), state, False), False
+        return None, is_first_day
+
+    return screen, is_first_day
 
 
 def main() -> None:
@@ -40,7 +83,6 @@ def main() -> None:
     music = MusicPlayer()
     state = GameState()
     is_first_day = True
-    phase = "menu"
 
     current_screen = MainMenu(renderer, InputHandler())
     elapsed = 0.0
@@ -60,11 +102,7 @@ def main() -> None:
         pygame.display.flip()
 
         if not current_screen.running:
-            try:
-                next_screen = _transition(current_screen, renderer, state, music, is_first_day)
-            except _ScreenSwitch as sw:
-                current_screen = sw.screen
-                continue
+            next_screen, is_first_day = _transition(current_screen, renderer, state, is_first_day)
 
             if next_screen is None:
                 break
@@ -72,15 +110,11 @@ def main() -> None:
             current_screen = next_screen
 
             if isinstance(current_screen, GameScreen):
-                phase = "playing"
                 elapsed = 0.0
                 tick_interval = DEFAULT_TICK_INTERVAL / state.tick_minutes * 5
                 music.play_tune("day_theme")
             elif isinstance(current_screen, (MainMenu, DaySummaryScreen)):
-                phase = "menu"
                 music.stop()
-            elif isinstance(current_screen, (DaySetupScreen, ShopScreen, HireScreen)):
-                phase = "setup"
 
         # Game tick processing
         if isinstance(current_screen, GameScreen) and not current_screen.paused:
@@ -105,7 +139,7 @@ def main() -> None:
                 elapsed = 0
 
             # Handle pending screen switches from GameScreen (shop/hire)
-            if current_screen.pending_action and current_screen.running:
+            if isinstance(current_screen, GameScreen) and current_screen.pending_action and current_screen.running:
                 action = current_screen.pending_action
                 current_screen.pending_action = None
                 if action == "shop":
@@ -114,7 +148,7 @@ def main() -> None:
                     current_screen = HireScreen(renderer, InputHandler(), state)
 
             # Handle shop/hire return to game
-            elif isinstance(current_screen, (ShopScreen, HireScreen)) and not current_screen.running:
+            if isinstance(current_screen, (ShopScreen, HireScreen)) and not current_screen.running:
                 current_screen = GameScreen(renderer, InputHandler(), state)
 
             # Update music based on rush hour
@@ -128,47 +162,3 @@ def main() -> None:
 
     music.stop()
     pygame.quit()
-
-
-def _transition(screen, renderer, state, music, is_first_day):
-    """Handle screen transitions based on current screen result."""
-    if isinstance(screen, MainMenu):
-        if screen.result == "start":
-            state = GameState()
-            is_first_day = True
-            return DaySetupScreen(renderer, InputHandler(), state, is_first_day)
-
-    elif isinstance(screen, DaySetupScreen):
-        if not is_first_day:
-            return DaySetupScreen(renderer, InputHandler(), state, is_first_day)
-        return ShopScreen(renderer, InputHandler(), state)
-
-    elif isinstance(screen, ShopScreen):
-        if screen.result == "cancelled" and is_first_day:
-            return MainMenu(renderer, InputHandler())
-        if not state.staff_list:
-            return HireScreen(renderer, InputHandler(), state)
-        _record_snapshot(state)
-        return GameScreen(renderer, InputHandler(), state)
-
-    elif isinstance(screen, HireScreen):
-        if screen.result == "cancelled" and not state.staff_list:
-            return MainMenu(renderer, InputHandler())
-        _record_snapshot(state)
-        return GameScreen(renderer, InputHandler(), state)
-
-    elif isinstance(screen, GameScreen):
-        if state.day_history:
-            state.day_history[-1]["end_budget"] = state.budget
-            state.day_history[-1]["end_reputation"] = state.reputation
-        music.stop()
-        return DaySummaryScreen(renderer, InputHandler(), state)
-
-    elif isinstance(screen, DaySummaryScreen):
-        if screen.result == "next_day" and state.reputation >= BANKRUPTCY_REP:
-            state.day += 1
-            is_first_day = False
-            return DaySetupScreen(renderer, InputHandler(), state, is_first_day)
-        return None
-
-    return screen
