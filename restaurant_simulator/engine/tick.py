@@ -4,7 +4,7 @@ from ..models import GameState
 from ..config import (
     BANKRUPTCY_REP, RANDOM_EVENT_CHANCE,
     QUALITY_STAFF_WEIGHT, QUALITY_EQUIP_WEIGHT,
-    SERVICE_STAMINA_PER_EXP_MULT,
+    SERVICE_BASE_STAMINA_DRAIN, SERVICE_STAMINA_PER_EXP_MULT,
     SUCCESS_INCOME_MULT, SUCCESS_REP_BASE, FAILURE_REP_BASE, GUEST_LEFT_REP_BASE,
     EQUIP_DEGRADE_PER_SERVICE,
 )
@@ -43,7 +43,7 @@ def process_tick(state: GameState) -> List[dict]:
         staff = free_staff.pop(0)
         guest = state.guest_queue.pop(0)
         quality = staff.skill * QUALITY_STAFF_WEIGHT + state.avg_equipment_quality * QUALITY_EQUIP_WEIGHT
-        stamina_drain = 8 + int(guest.expectation_multiplier * SERVICE_STAMINA_PER_EXP_MULT)
+        stamina_drain = SERVICE_BASE_STAMINA_DRAIN + int(guest.expectation_multiplier * SERVICE_STAMINA_PER_EXP_MULT)
         staff.start_service(stamina_drain=stamina_drain)
         state.kitchen.degrade(EQUIP_DEGRADE_PER_SERVICE)
         state.hall.degrade(EQUIP_DEGRADE_PER_SERVICE)
