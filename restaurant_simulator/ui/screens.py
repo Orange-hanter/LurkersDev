@@ -4,7 +4,7 @@ from typing import List
 from ..models import GameState
 from ..config import (
     WINDOW_WIDTH, WINDOW_HEIGHT, WORK_START_HOUR, WORK_END_HOUR,
-    REPAIR_COST, DAILY_SALARY_PER_SKILL,
+    REPAIR_COST, DAILY_SALARY_PER_SKILL, EQUIPMENT_TIERS, STARTING_BUDGET,
 )
 from .renderer import Renderer
 from .input_handler import InputHandler
@@ -176,13 +176,6 @@ class GameScreen(Screen):
         self.renderer.draw_text("Space:Pause  +/-:Speed  M:Music  S:Shop  H:Hire  Q:End Day  ESC:Quit", 10, WINDOW_HEIGHT - 18, "dim", "small")
 
 
-EQUIPMENT_TIERS = {
-    0: ("Basic", 50, 1, 80),
-    1: ("Standard", 100, 3, 120),
-    2: ("Premium", 180, 5, 150),
-}
-
-
 class ShopScreen(Screen):
     def __init__(self, renderer: Renderer, input_handler: InputHandler, state: GameState):
         super().__init__(renderer, input_handler)
@@ -305,7 +298,7 @@ class DaySummaryScreen(Screen):
         self.renderer.clear()
         s = self.state
         self.renderer.draw_text_centered(f"Day {s.day} Summary", 50, "cyan", "large")
-        start = s.day_history[-1]["end_budget"] if s.day_history else 500
+        start = s.day_history[-1]["start_budget"] if s.day_history else STARTING_BUDGET
         profit = s.budget - start
         self.renderer.draw_text_centered(f"Budget: ${start:.2f} -> ${s.budget:.2f}", 100, "green" if profit >= 0 else "red", "bold")
         self.renderer.draw_text_centered(f"Profit: {'+' if profit >= 0 else ''}${profit:.2f}", 130, "green" if profit >= 0 else "red")

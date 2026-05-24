@@ -59,3 +59,10 @@ WINDOW_HEIGHT = 640
 BG_COLOR = (26, 26, 46)
 FPS = 60
 DEFAULT_TICK_INTERVAL = 0.5  # seconds between ticks at 1x speed
+
+# Equipment shop tiers: (display_name, price, quality, max_durability)
+EQUIPMENT_TIERS = {
+    0: ("Basic", 50, 1, 80),
+    1: ("Standard", 100, 3, 120),
+    2: ("Premium", 180, 5, 150),
+}
