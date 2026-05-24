@@ -109,15 +109,9 @@ def main() -> None:
                 action = current_screen.pending_action
                 current_screen.pending_action = None
                 if action == "shop":
-                    try:
-                        raise _ScreenSwitch(ShopScreen(renderer, InputHandler(), state))
-                    except _ScreenSwitch as sw:
-                        current_screen = sw.screen
+                    current_screen = ShopScreen(renderer, InputHandler(), state)
                 elif action == "hire":
-                    try:
-                        raise _ScreenSwitch(HireScreen(renderer, InputHandler(), state))
-                    except _ScreenSwitch as sw:
-                        current_screen = sw.screen
+                    current_screen = HireScreen(renderer, InputHandler(), state)
 
             # Handle shop/hire return to game
             elif isinstance(current_screen, (ShopScreen, HireScreen)) and not current_screen.running:
