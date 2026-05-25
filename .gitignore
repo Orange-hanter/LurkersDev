@@ -1,1 +1,22 @@
-__pycache__/game_v3.cpython-313.pyc
+*.pyc
+__pycache__/
+# Ignore virtual environment directories
+venv/
+env/
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+# Ignore data files
+data/
+# Ignore logs
+logs/
+# Ignore model checkpoints
+checkpoints/
+# Ignore configuration files
+config.yaml
+# Ignore any other files or directories you want to exclude from version control
+# For example, if you have a directory for temporary files:
+temp/
+# Ignore any other specific files or directories as needed
+# Ignore .DS_Store files on macOS
+.DS_Store
+

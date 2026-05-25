@@ -783,8 +783,8 @@ def choose_equipment(state: GameState) -> Tuple[Tuple[int, int, int], Tuple[int,
                 return (choice,) + EQUIPMENT_TIERS[choice]
             print(cp("Invalid choice.", C.red))
 
-    _, k_price, k_q, k_dur = pick_tier("kitchen")
-    _, h_price, h_q, h_dur = pick_tier("hall")
+    _, _, k_price, k_q, k_dur = pick_tier("kitchen")
+    _, _, h_price, h_q, h_dur = pick_tier("hall")
     return (k_q, k_price, k_dur), (h_q, h_price, h_dur)
 
 
