@@ -27,7 +27,7 @@ func _on_confirm_pressed() -> void:
 	GameState.table_size_chosen = size_option.get_item_text(size_option.selected).to_lower()
 	var tick_text := tick_option.get_item_text(tick_option.selected)
 	GameState.tick_duration_minutes = int(tick_text.trim_suffix(" min"))
-	GameState.tick_interval_chosen = GameState.tick_duration_minutes / 60.0 * GameConfig.TOTAL_TICKS_PER_DAY / 100.0 * 0.5
+	GameState.tick_interval_chosen = GameConfig.DEFAULT_TICK_INTERVAL
 
 	if GameState.day == 1 and not GameState.kitchen_equip:
 		show_screen("res://scenes/shop_screen.tscn")
