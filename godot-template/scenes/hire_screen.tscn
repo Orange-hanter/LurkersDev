@@ -38,6 +38,14 @@ text = "Hire Staff"
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 28
 
+[node name="WarningLabel" type="Label" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+text = "You must hire at least one staff member before continuing"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.9, 0.3, 0.3, 1)
+visible = false
+
 [node name="BudgetLabel" type="Label" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
 text = "Budget: $500"
