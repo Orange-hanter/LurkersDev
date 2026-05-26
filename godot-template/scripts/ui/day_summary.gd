@@ -2,9 +2,6 @@ class_name DaySummary
 extends BaseScreen
 ## End-of-day summary. Shows profit, rep change, service stats, equipment status.
 
-enum Result { NEXT_DAY, QUIT }
-
-
 func _ready() -> void:
 	pass  # populate stats from GameState
 

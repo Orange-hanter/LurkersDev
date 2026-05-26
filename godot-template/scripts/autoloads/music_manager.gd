@@ -6,9 +6,6 @@ var playing: bool = false
 var muted: bool = false
 var current_tune: String = ""
 
-enum Tune { DAY_THEME, RUSH_HOUR, QUIET_HOUR }
-
-
 func play_tune(tune_name: String) -> void:
 	current_tune = tune_name
 	playing = true

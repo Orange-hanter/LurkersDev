@@ -10,5 +10,3 @@ func show_screen(scene_path: String) -> void:
 	visible = false
 	get_tree().call_deferred("change_scene_to_file", scene_path)
 
-static func clamp_int(value: int, minimum: int, maximum: int) -> int:
-	return clampi(value, minimum, maximum)
