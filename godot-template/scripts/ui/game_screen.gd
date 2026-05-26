@@ -3,8 +3,6 @@ extends BaseScreen
 ## Main gameplay screen. Shows table grid, guest queue, staff cards,
 ## equipment status bars, event log, and control buttons.
 
-signal pending_action(action: String)
-
 @onready var event_log: RichTextLabel = $HBoxContainer/CenterPanel/EventLog
 @onready var phase_label: Label = $HBoxContainer/CenterPanel/BottomBar/PhaseLabel
 @onready var table_grid: GridContainer = $HBoxContainer/TablePanel/TableGrid
@@ -61,12 +59,26 @@ func _on_speed_down_pressed() -> void:
 
 
 func _on_shop_pressed() -> void:
-	pending_action.emit("shop")
+	show_screen("res://scenes/shop_screen.tscn")
 
 
 func _on_hire_pressed() -> void:
-	pending_action.emit("hire")
+	show_screen("res://scenes/hire_screen.tscn")
 
 
 func _on_end_day_pressed() -> void:
-	pending_action.emit("end_day")
+	show_screen("res://scenes/day_summary.tscn")
+
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("pause"):
+		_on_pause_pressed()
+	elif event.is_action_pressed("speed_up"):
+		_on_speed_up_pressed()
+	elif event.is_action_pressed("speed_down"):
+		_on_speed_down_pressed()
+	elif event.is_action_pressed("shop"):
+		_on_shop_pressed()
+	elif event.is_action_pressed("hire"):
+		_on_hire_pressed()
+	elif event.is_action_pressed("end_day"):
+		_on_end_day_pressed()
