@@ -65,3 +65,5 @@ layout_mode = 2
 text = "Next Day"
 size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 18
+
+[connection signal="pressed" from="CenterContainer/VBoxContainer/NextDayButton" to="." method="_on_next_day_pressed"]

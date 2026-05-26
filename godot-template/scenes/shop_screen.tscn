@@ -102,3 +102,7 @@ text = "Repair Hall ($20)"
 layout_mode = 2
 text = "Back"
 size_flags_horizontal = 4
+
+[connection signal="pressed" from="MarginContainer/VBoxContainer/EquipmentHBox/KitchenSection/KitchenRepairBtn" to="." method="_on_repair_kitchen"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/EquipmentHBox/HallSection/HallRepairBtn" to="." method="_on_repair_hall"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/BackButton" to="." method="_on_back_pressed"]

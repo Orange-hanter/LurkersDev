@@ -133,3 +133,8 @@ text = "Hire"
 layout_mode = 2
 text = "Back"
 size_flags_horizontal = 4
+
+[connection signal="pressed" from="CenterContainer/VBoxContainer/CandidatesHBox/Candidate1/Candidate1VBox/Candidate1HireBtn" to="." method="_on_hire_candidate_1"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/CandidatesHBox/Candidate2/Candidate2VBox/Candidate2HireBtn" to="." method="_on_hire_candidate_2"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/CandidatesHBox/Candidate3/Candidate3VBox/Candidate3HireBtn" to="." method="_on_hire_candidate_3"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/BackButton" to="." method="_on_back_pressed"]

@@ -145,3 +145,10 @@ text = "Hall:"
 [node name="HallBar" type="ProgressBar" parent="HBoxContainer/RightPanel/EquipmentSection/EquipVBox"]
 layout_mode = 2
 value = 100.0
+
+[connection signal="pressed" from="HBoxContainer/CenterPanel/BottomBar/PauseButton" to="." method="_on_pause_pressed"]
+[connection signal="pressed" from="HBoxContainer/CenterPanel/BottomBar/SpeedDownButton" to="." method="_on_speed_down_pressed"]
+[connection signal="pressed" from="HBoxContainer/CenterPanel/BottomBar/SpeedUpButton" to="." method="_on_speed_up_pressed"]
+[connection signal="pressed" from="HBoxContainer/CenterPanel/BottomBar/ShopButton" to="." method="_on_shop_pressed"]
+[connection signal="pressed" from="HBoxContainer/CenterPanel/BottomBar/HireButton" to="." method="_on_hire_pressed"]
+[connection signal="pressed" from="HBoxContainer/CenterPanel/BottomBar/EndDayButton" to="." method="_on_end_day_pressed"]
