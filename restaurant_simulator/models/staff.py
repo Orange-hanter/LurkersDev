@@ -1,4 +1,4 @@
-from ..config import STAMINA_RECOVERY_BASE, STAMINA_RECOVERY_KITCHEN_BONUS, SERVICE_BASE_STAMINA_DRAIN
+from ..config import REST_THRESHOLD, REST_RECOVERY_RATE
 
 
 class Staff:
@@ -7,21 +7,29 @@ class Staff:
         self.daily_salary = daily_salary
         self.max_stamina = 100
         self.stamina = self.max_stamina
+        self.rest_threshold = int(self.max_stamina * REST_THRESHOLD)
+        self.status = "ready"
         self.busy_timer = 0
 
     @property
+    def is_ready(self) -> bool:
+        return self.status == "ready"
+
+    @property
     def is_free(self) -> bool:
-        return self.busy_timer == 0 and self.stamina > 0
+        return self.status in ("ready", "resting") and self.busy_timer == 0
 
-    def start_service(self, stamina_drain: int = SERVICE_BASE_STAMINA_DRAIN) -> None:
-        if not self.is_free:
-            raise RuntimeError("Staff is not available")
-        self.busy_timer = 1
-        self.stamina = max(0, self.stamina - stamina_drain)
+    def assign_service(self, duration: int) -> None:
+        self.status = "busy"
+        self.busy_timer = duration
 
-    def tick_update(self, kitchen_effective_quality: float = 0.0) -> None:
-        if self.busy_timer > 0:
-            self.busy_timer -= 1
-        elif self.stamina < self.max_stamina:
-            recovery = STAMINA_RECOVERY_BASE + int(kitchen_effective_quality * STAMINA_RECOVERY_KITCHEN_BONUS)
-            self.stamina = min(self.max_stamina, self.stamina + recovery)
+    def release(self) -> None:
+        self.busy_timer = 0
+        self.status = "ready"
+
+    def tick_update(self) -> None:
+        if self.status == "busy":
+            if self.busy_timer > 0:
+                self.busy_timer -= 1
+        elif self.status == "resting":
+            self.stamina = min(self.max_stamina, self.stamina + REST_RECOVERY_RATE)
