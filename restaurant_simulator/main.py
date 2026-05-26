@@ -31,9 +31,10 @@ def _transition(screen, renderer, state, is_first_day):
             return DaySetupScreen(renderer, InputHandler(), GameState(), True), True
 
     elif isinstance(screen, DaySetupScreen):
-        if not is_first_day:
-            return DaySetupScreen(renderer, InputHandler(), state, is_first_day), is_first_day
-        return ShopScreen(renderer, InputHandler(), state), is_first_day
+        if is_first_day:
+            return ShopScreen(renderer, InputHandler(), state), is_first_day
+        _record_snapshot(state)
+        return GameScreen(renderer, InputHandler(), state), is_first_day
 
     elif isinstance(screen, ShopScreen):
         if screen.result == "cancelled" and is_first_day:

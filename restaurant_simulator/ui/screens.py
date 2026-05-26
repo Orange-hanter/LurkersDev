@@ -174,8 +174,11 @@ class GameScreen(Screen):
         self.renderer.draw_rect(0, 0, WINDOW_WIDTH, 28, "bar_bg")
         self.renderer.draw_text(f"Day {s.day} | {s.current_time_str()} | T {s.tick}/{s.total_ticks} | ${s.budget:.2f} | Rep {s.reputation:+.0f} | {speed_label}", 5, 5, speed_color, "bold")
 
-        self.renderer.draw_text("Tables:", 10, 40, "cyan", "bold")
-        bx, by = 10, 60
+        table_section_y = 40
+        table_section_h = ((len(s.tables) + 4) // 5) * 60 + 45
+        self.renderer.draw_rect(5, table_section_y, 480, table_section_h, "panel", 1)
+        self.renderer.draw_text(" TABLES", 5, table_section_y - 18, "cyan", "bold")
+        bx, by = 15, table_section_y + 5
         cols = 5
         for i, table in enumerate(s.tables):
             col = i % cols
