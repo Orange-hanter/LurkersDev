@@ -1,20 +1,18 @@
-"""Main entry point: pygame init, game loop, state machine."""
 import pygame
-from .config import WINDOW_WIDTH, WINDOW_HEIGHT, FPS, DEFAULT_TICK_INTERVAL, BANKRUPTCY_REP
+import random
+from .config import WINDOW_WIDTH, WINDOW_HEIGHT, FPS, DEFAULT_TICK_INTERVAL, DAILY_EVENT_CHANCE, TOTAL_TICKS_PER_DAY, RANDOM_EVENT_CHANCE
 from .models import GameState
 from .ui import Renderer, InputHandler, MainMenu, DaySetupScreen, GameScreen, DaySummaryScreen, ShopScreen, HireScreen
 from .audio import MusicPlayer
-from .engine.tick import process_tick
+from .engine import process_tick, DAILY_EVENTS, TICK_EVENTS, pick_random_event, end_of_day
 
 
 class _ScreenSwitch(Exception):
-    """Internal exception for switching screens from within the tick loop."""
     def __init__(self, screen):
         self.screen = screen
 
 
 def _record_snapshot(state: GameState) -> None:
-    """Save current state to day_history for multi-day persistence."""
     state.day_history.append({
         "day": state.day,
         "start_budget": state.budget,
@@ -28,12 +26,6 @@ def _record_snapshot(state: GameState) -> None:
 
 
 def _transition(screen, renderer, state, is_first_day):
-    """
-    Handle screen transitions based on current screen result.
-
-    Returns (next_screen, new_is_first_day) tuple.
-    The is_first_day flag must be returned because Python booleans are immutable.
-    """
     if isinstance(screen, MainMenu):
         if screen.result == "start":
             return DaySetupScreen(renderer, InputHandler(), GameState(), True), True
@@ -64,19 +56,30 @@ def _transition(screen, renderer, state, is_first_day):
         return DaySummaryScreen(renderer, InputHandler(), state), is_first_day
 
     elif isinstance(screen, DaySummaryScreen):
-        if screen.result == "next_day" and state.reputation >= BANKRUPTCY_REP:
+        if screen.result == "next_day":
             state.day += 1
+            state.reputation = int(state.reputation * 0.8)
             return DaySetupScreen(renderer, InputHandler(), state, False), False
         return None, is_first_day
 
     return screen, is_first_day
 
 
+def _start_day(state: GameState) -> str:
+    state.reset_daily()
+
+    if random.random() < DAILY_EVENT_CHANCE:
+        daily_event = pick_random_event(DAILY_EVENTS)
+        if daily_event:
+            return daily_event.handler(state)
+    return ""
+
+
 def main() -> None:
     pygame.init()
     pygame.mixer.init(frequency=44100, size=-16, channels=2, buffer=512)
     screen_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-    pygame.display.set_caption("Restaurant Simulator v4")
+    pygame.display.set_caption("Restaurant Simulator v5")
     clock = pygame.time.Clock()
 
     renderer = Renderer(screen_surface)
@@ -111,12 +114,14 @@ def main() -> None:
 
             if isinstance(current_screen, GameScreen):
                 elapsed = 0.0
-                tick_interval = DEFAULT_TICK_INTERVAL / state.tick_minutes * 5
+                tick_interval = DEFAULT_TICK_INTERVAL
+                daily_msg = _start_day(state)
+                if daily_msg:
+                    current_screen.log_event(daily_msg)
                 music.play_tune("day_theme")
             elif isinstance(current_screen, (MainMenu, DaySummaryScreen)):
                 music.stop()
 
-        # Game tick processing
         if isinstance(current_screen, GameScreen) and not current_screen.paused:
             elapsed += dt * current_screen.game_speed
             if elapsed >= tick_interval:
@@ -126,19 +131,28 @@ def main() -> None:
                         current_screen.log_event(e["message"])
                     elif e["type"] == "success":
                         g = e["guest"]
-                        current_screen.log_event(f"{g.icon} Success! {g.label} served +${e['income']:.2f} rep +{e['rep_gain']}")
+                        current_screen.log_event(f"{g.icon} Success! {g.label} Q={e['quality']:.1f} +${e['income']:.2f}")
                     elif e["type"] == "failure":
                         g = e["guest"]
-                        current_screen.log_event(f"{g.icon} Failed! {g.label} unhappy -${e['loss']:.2f} rep -{e['rep_loss']}")
+                        current_screen.log_event(f"{g.icon} Failed! {g.label} Q={e['quality']:.1f} -${e['loss']:.2f}")
                     elif e["type"] == "left":
                         g = e["guest"]
-                        current_screen.log_event(f"{g.icon} {g.label} left (waited too long) rep -{e['rep_loss']}")
-                    elif e["type"] == "day_end" or e["type"] == "bankruptcy":
+                        current_screen.log_event(f"{g.icon} {g.label} left (waited {g.wait_timer}/{g.patience_ticks})")
+                    elif e["type"] == "warning":
+                        current_screen.log_event(f"WARNING: {e['message']}")
+                    elif e["type"] == "spawn":
+                        g = e["guest"]
+                        current_screen.log_event(f"{g.icon} {g.label} arrived! B=${g.budget:.0f}")
+                    elif e["type"] == "day_end":
+                        result = end_of_day(state)
+                        if result == "bankruptcy":
+                            current_screen.log_event("DAY OVER - BANKRUPTCY!")
                         current_screen.result = "quit_day"
                         current_screen.exit()
                 elapsed = 0
 
-            # Handle pending screen switches from GameScreen (shop/hire)
+                current_screen.current_phase = ((state.tick - 1) % 6) + 1
+
             if isinstance(current_screen, GameScreen) and current_screen.pending_action and current_screen.running:
                 action = current_screen.pending_action
                 current_screen.pending_action = None
@@ -147,11 +161,9 @@ def main() -> None:
                 elif action == "hire":
                     current_screen = HireScreen(renderer, InputHandler(), state)
 
-            # Handle shop/hire return to game
             if isinstance(current_screen, (ShopScreen, HireScreen)) and not current_screen.running:
                 current_screen = GameScreen(renderer, InputHandler(), state)
 
-            # Update music based on rush hour
             if isinstance(current_screen, GameScreen) and music.playing:
                 if state.rush_hour_active and music.current_tune != "rush_hour":
                     music.play_tune("rush_hour")
@@ -159,6 +171,13 @@ def main() -> None:
                     music.play_tune("day_theme")
                 if music.muted != current_screen.music_muted:
                     music.set_muted(current_screen.music_muted)
+
+            if isinstance(current_screen, GameScreen) and not current_screen.paused and elapsed == 0:
+                if random.random() < RANDOM_EVENT_CHANCE:
+                    tick_event = pick_random_event(TICK_EVENTS)
+                    if tick_event:
+                        result = tick_event.handler(state)
+                        current_screen.log_event(result)
 
     music.stop()
     pygame.quit()
