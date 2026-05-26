@@ -1,0 +1,147 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/game_screen.gd" id="1"]
+
+[node name="GameScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.102, 0.102, 0.18, 1)
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 4
+
+[node name="TablePanel" type="PanelContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(320, 0)
+
+[node name="TableGrid" type="GridContainer" parent="HBoxContainer/TablePanel"]
+layout_mode = 2
+columns = 5
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 4
+
+[node name="CenterPanel" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="EventLog" type="RichTextLabel" parent="HBoxContainer/CenterPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+text = "=== Day starts ===
+"
+scroll_following = true
+
+[node name="BottomBar" type="HBoxContainer" parent="HBoxContainer/CenterPanel"]
+layout_mode = 2
+
+[node name="PauseButton" type="Button" parent="HBoxContainer/CenterPanel/BottomBar"]
+layout_mode = 2
+text = "Pause"
+
+[node name="SpeedDownButton" type="Button" parent="HBoxContainer/CenterPanel/BottomBar"]
+layout_mode = 2
+text = "-"
+
+[node name="SpeedLabel" type="Label" parent="HBoxContainer/CenterPanel/BottomBar"]
+layout_mode = 2
+text = "1x"
+
+[node name="SpeedUpButton" type="Button" parent="HBoxContainer/CenterPanel/BottomBar"]
+layout_mode = 2
+text = "+"
+
+[node name="PhaseLabel" type="Label" parent="HBoxContainer/CenterPanel/BottomBar"]
+layout_mode = 2
+text = "Tick: 0 / 100"
+
+[node name="ShopButton" type="Button" parent="HBoxContainer/CenterPanel/BottomBar"]
+layout_mode = 2
+text = "Shop [S]"
+
+[node name="HireButton" type="Button" parent="HBoxContainer/CenterPanel/BottomBar"]
+layout_mode = 2
+text = "Hire [H]"
+
+[node name="EndDayButton" type="Button" parent="HBoxContainer/CenterPanel/BottomBar"]
+layout_mode = 2
+text = "End Day [Q]"
+
+[node name="RightPanel" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(220, 0)
+theme_override_constants/separation = 8
+
+[node name="GuestsSection" type="PanelContainer" parent="HBoxContainer/RightPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="GuestList" type="VBoxContainer" parent="HBoxContainer/RightPanel/GuestsSection"]
+layout_mode = 2
+
+[node name="GuestHeader" type="Label" parent="HBoxContainer/RightPanel/GuestsSection/GuestList"]
+layout_mode = 2
+text = "Queue (0)"
+theme_override_font_sizes/font_size = 14
+
+[node name="StaffSection" type="PanelContainer" parent="HBoxContainer/RightPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="StaffGrid" type="HFlowContainer" parent="HBoxContainer/RightPanel/StaffSection"]
+layout_mode = 2
+
+[node name="StaffHeader" type="Label" parent="HBoxContainer/RightPanel/StaffSection/StaffGrid"]
+layout_mode = 2
+text = "Staff"
+theme_override_font_sizes/font_size = 14
+
+[node name="EquipmentSection" type="PanelContainer" parent="HBoxContainer/RightPanel"]
+layout_mode = 2
+
+[node name="EquipVBox" type="VBoxContainer" parent="HBoxContainer/RightPanel/EquipmentSection"]
+layout_mode = 2
+
+[node name="BudgetLabel" type="Label" parent="HBoxContainer/RightPanel/EquipmentSection/EquipVBox"]
+layout_mode = 2
+text = "Budget: $500"
+
+[node name="RepLabel" type="Label" parent="HBoxContainer/RightPanel/EquipmentSection/EquipVBox"]
+layout_mode = 2
+text = "Rep: 0"
+
+[node name="KitchenLabel" type="Label" parent="HBoxContainer/RightPanel/EquipmentSection/EquipVBox"]
+layout_mode = 2
+text = "Kitchen:"
+
+[node name="KitchenBar" type="ProgressBar" parent="HBoxContainer/RightPanel/EquipmentSection/EquipVBox"]
+layout_mode = 2
+value = 100.0
+
+[node name="HallLabel" type="Label" parent="HBoxContainer/RightPanel/EquipmentSection/EquipVBox"]
+layout_mode = 2
+text = "Hall:"
+
+[node name="HallBar" type="ProgressBar" parent="HBoxContainer/RightPanel/EquipmentSection/EquipVBox"]
+layout_mode = 2
+value = 100.0

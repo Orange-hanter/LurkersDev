@@ -1,0 +1,135 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/hire_screen.gd" id="1"]
+
+[node name="HireScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.102, 0.102, 0.18, 1)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="TitleLabel" type="Label" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+text = "Hire Staff"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 28
+
+[node name="BudgetLabel" type="Label" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+text = "Budget: $500"
+horizontal_alignment = 1
+
+[node name="CandidatesHBox" type="HBoxContainer" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 20
+
+[node name="Candidate1" type="PanelContainer" parent="CenterContainer/VBoxContainer/CandidatesHBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(180, 180)
+
+[node name="Candidate1VBox" type="VBoxContainer" parent="CenterContainer/VBoxContainer/CandidatesHBox/Candidate1"]
+layout_mode = 2
+alignment = 1
+
+[node name="Candidate1Name" type="Label" parent="CenterContainer/VBoxContainer/CandidatesHBox/Candidate1/Candidate1VBox"]
+layout_mode = 2
+text = "---"
+horizontal_alignment = 1
+
+[node name="Candidate1Skill" type="Label" parent="CenterContainer/VBoxContainer/CandidatesHBox/Candidate1/Candidate1VBox"]
+layout_mode = 2
+text = "Skill: ?"
+horizontal_alignment = 1
+
+[node name="Candidate1Salary" type="Label" parent="CenterContainer/VBoxContainer/CandidatesHBox/Candidate1/Candidate1VBox"]
+layout_mode = 2
+text = "Salary: $?"
+horizontal_alignment = 1
+
+[node name="Candidate1HireBtn" type="Button" parent="CenterContainer/VBoxContainer/CandidatesHBox/Candidate1/Candidate1VBox"]
+layout_mode = 2
+text = "Hire"
+
+[node name="Candidate2" type="PanelContainer" parent="CenterContainer/VBoxContainer/CandidatesHBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(180, 180)
+
+[node name="Candidate2VBox" type="VBoxContainer" parent="CenterContainer/VBoxContainer/CandidatesHBox/Candidate2"]
+layout_mode = 2
+alignment = 1
+
+[node name="Candidate2Name" type="Label" parent="CenterContainer/VBoxContainer/CandidatesHBox/Candidate2/Candidate2VBox"]
+layout_mode = 2
+text = "---"
+horizontal_alignment = 1
+
+[node name="Candidate2Skill" type="Label" parent="CenterContainer/VBoxContainer/CandidatesHBox/Candidate2/Candidate2VBox"]
+layout_mode = 2
+text = "Skill: ?"
+horizontal_alignment = 1
+
+[node name="Candidate2Salary" type="Label" parent="CenterContainer/VBoxContainer/CandidatesHBox/Candidate2/Candidate2VBox"]
+layout_mode = 2
+text = "Salary: $?"
+horizontal_alignment = 1
+
+[node name="Candidate2HireBtn" type="Button" parent="CenterContainer/VBoxContainer/CandidatesHBox/Candidate2/Candidate2VBox"]
+layout_mode = 2
+text = "Hire"
+
+[node name="Candidate3" type="PanelContainer" parent="CenterContainer/VBoxContainer/CandidatesHBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(180, 180)
+
+[node name="Candidate3VBox" type="VBoxContainer" parent="CenterContainer/VBoxContainer/CandidatesHBox/Candidate3"]
+layout_mode = 2
+alignment = 1
+
+[node name="Candidate3Name" type="Label" parent="CenterContainer/VBoxContainer/CandidatesHBox/Candidate3/Candidate3VBox"]
+layout_mode = 2
+text = "---"
+horizontal_alignment = 1
+
+[node name="Candidate3Skill" type="Label" parent="CenterContainer/VBoxContainer/CandidatesHBox/Candidate3/Candidate3VBox"]
+layout_mode = 2
+text = "Skill: ?"
+horizontal_alignment = 1
+
+[node name="Candidate3Salary" type="Label" parent="CenterContainer/VBoxContainer/CandidatesHBox/Candidate3/Candidate3VBox"]
+layout_mode = 2
+text = "Salary: $?"
+horizontal_alignment = 1
+
+[node name="Candidate3HireBtn" type="Button" parent="CenterContainer/VBoxContainer/CandidatesHBox/Candidate3/Candidate3VBox"]
+layout_mode = 2
+text = "Hire"
+
+[node name="BackButton" type="Button" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+text = "Back"
+size_flags_horizontal = 4
