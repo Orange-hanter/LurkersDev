@@ -20,3 +20,6 @@ temp/
 # Ignore .DS_Store files on macOS
 .DS_Store
 
+.godot/
+*.uid
+docs/superpowers/

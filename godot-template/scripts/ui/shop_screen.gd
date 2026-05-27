@@ -8,7 +8,8 @@ extends BaseScreen
 
 func _ready() -> void:
 	pass  # populate tier cards from GameConfig.EQUIPMENT_TIERS
-	_update_warning()
+	if is_instance_valid(GameState):
+		_update_warning()
 
 
 func _update_warning() -> void:
