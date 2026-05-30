@@ -21,3 +21,13 @@ func durability_fraction() -> float:
 	if max_durability <= 0:
 		return 0.0
 	return clamp(durability / max_durability, 0.0, 1.0)
+
+static func create(tier_index: int, p_label: String) -> Equipment:
+	var info: Dictionary = GameConfig.EQUIPMENT_TIERS[tier_index]
+	var e := Equipment.new()
+	e.tier = tier_index as Tier
+	e.quality = info["quality"]
+	e.max_durability = info["max_durability"]
+	e.durability = e.max_durability
+	e.label = p_label + " " + info["label"]
+	return e

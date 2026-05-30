@@ -3,9 +3,16 @@ class_name GameConfig
 
 # Economy
 const DAILY_SALARY_PER_SKILL: int = 30
-const STARTING_BUDGET: int = 500
+const STARTING_BUDGET: int = 650
 const REPAIR_COST: int = 20
 const REPAIR_AMOUNT: int = 50
+const BASE_MENU_PRICE: int = 34
+const MIN_MENU_PRICE: int = 18
+const MAX_MENU_PRICE: int = 90
+const TABLE_RENT_PER_DAY: int = 7
+const UTILITY_COST_PER_DAY: int = 35
+const DECOR_UPGRADE_BASE_COST: int = 90
+const DECOR_MAX_LEVEL: int = 5
 
 # Reputation
 const REP_MIN: int = -50
@@ -26,6 +33,14 @@ const SPAWN_BASE_RATE: float = 0.3
 const SPAWN_REP_FACTOR: float = 0.01
 const SPAWN_VARIANCE_LOW: float = 0.8
 const SPAWN_VARIANCE_HIGH: float = 1.2
+const QUEUE_SOFT_CAP: int = 12
+
+const MARKETING_LEVELS: Dictionary = {
+	0: {"label": "Word of mouth", "cost": 0, "demand_mult": 1.0},
+	1: {"label": "Flyers", "cost": 45, "demand_mult": 1.25},
+	2: {"label": "Radio ads", "cost": 95, "demand_mult": 1.55},
+	3: {"label": "City campaign", "cost": 165, "demand_mult": 1.9},
+}
 
 # Time of day multipliers
 const TIME_OF_DAY_MULTIPLIERS: Dictionary = {
@@ -49,11 +64,17 @@ const GUEST_EXPECTATION_REP_FACTOR: float = 0.05
 const QUALITY_STAFF_WEIGHT: float = 0.7
 const QUALITY_EQUIP_WEIGHT: float = 0.3
 const SERVICE_DURATION: int = 5
+const SERVICE_PARTY_SIZE_FACTOR: float = 0.45
+const SERVICE_SKILL_DISCOUNT: float = 0.08
 const SUCCESS_INCOME_MULT: float = 1.2
 const SUCCESS_REP_GAIN: int = 3
 const FAILURE_COST_MULT: float = 0.3
 const FAILURE_REP_LOSS: int = 10
 const GUEST_LEFT_REP_LOSS: int = 2
+const TIP_PER_QUALITY_POINT: float = 0.04
+const PRICE_PRESSURE_PER_DOLLAR: float = 0.035
+const DECOR_QUALITY_BONUS: float = 0.2
+const DECOR_PATIENCE_BONUS: int = 1
 
 # Stamina
 const REST_THRESHOLD: float = 0.3
@@ -73,8 +94,8 @@ static func table_seat_count(size: String) -> int:
 	return 0
 
 # UI
-const WINDOW_WIDTH: int = 960
-const WINDOW_HEIGHT: int = 640
+const WINDOW_WIDTH: int = 1440
+const WINDOW_HEIGHT: int = 900
 const BG_COLOR: Color = Color(0.102, 0.102, 0.18, 1.0)
 const DEFAULT_TICK_INTERVAL: float = 0.5
 const FPS: int = 60
@@ -89,8 +110,8 @@ const EQUIPMENT_TIERS: Dictionary = {
 # Guest types: {type_name: {weight, budget_mult, exp_mult, rep_mult, label, priority}}
 static func guest_types() -> Dictionary:
 	return {
-		"regular":  {"weight": 70, "budget_mult": 1.0, "exp_mult": 1.0, "rep_mult": 1.0, "label": "Regular",  "priority": 0},
-		"business": {"weight": 20, "budget_mult": 1.5, "exp_mult": 1.2, "rep_mult": 1.5, "label": "Business", "priority": 0},
-		"vip":      {"weight": 8,  "budget_mult": 2.5, "exp_mult": 1.5, "rep_mult": 2.0, "label": "VIP",      "priority": 1},
-		"critic":   {"weight": 2,  "budget_mult": 3.0, "exp_mult": 2.0, "rep_mult": 5.0, "label": "CRITIC",   "priority": 1},
+		"regular":  {"weight": 66, "budget_mult": 1.0, "exp_mult": 1.0, "rep_mult": 1.0, "label": "Regular",  "priority": 0, "party_min": 1, "party_max": 4},
+		"business": {"weight": 22, "budget_mult": 1.45, "exp_mult": 1.2, "rep_mult": 1.5, "label": "Business", "priority": 0, "party_min": 1, "party_max": 3},
+		"vip":      {"weight": 9,  "budget_mult": 2.2, "exp_mult": 1.45, "rep_mult": 2.0, "label": "VIP",      "priority": 1, "party_min": 2, "party_max": 5},
+		"critic":   {"weight": 3,  "budget_mult": 3.0, "exp_mult": 1.9, "rep_mult": 5.0, "label": "CRITIC",   "priority": 2, "party_min": 1, "party_max": 2},
 	}

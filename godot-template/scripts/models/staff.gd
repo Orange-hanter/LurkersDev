@@ -19,3 +19,21 @@ func stamina_fraction() -> float:
 	if max_stamina <= 0:
 		return 0.0
 	return clamp(stamina / max_stamina, 0.0, 1.0)
+
+static func generate_candidate() -> Staff:
+	var s := Staff.new()
+	s.staff_name = _random_name()
+	s.skill = randi_range(1, 10)
+	s.max_stamina = 80.0 + randf() * 70.0
+	s.stamina = s.max_stamina
+	return s
+
+const _names: Array[String] = [
+	"Alice", "Bob", "Charlie", "Diana", "Evan", "Fiona", "George", "Hannah",
+	"Ivan", "Julia", "Kevin", "Luna", "Mike", "Nina", "Oscar", "Paula",
+	"Quinn", "Rita", "Sam", "Tina", "Uma", "Victor", "Wendy", "Xander",
+	"Yara", "Zack", "Mia", "Leo", "Sofia", "Noah", "Emma", "Liam"
+]
+
+static func _random_name() -> String:
+	return _names[randi_range(0, _names.size() - 1)]
